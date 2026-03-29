@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-grid"></div>
+
+    <main class="page-shell">
+        <section class="hero glass">
+            <div class="hero-copy">
+                <span class="badge">CYEYE Tool</span>
+                <h1>Dataset Analyzer</h1>
+                <p>Upload a CSV, get instant structure analysis, charts, preview, missing-value insights, and column-level vibes.</p>
+            </div>
+            <form class="upload-panel" method="POST" enctype="multipart/form-data">
+                <label class="file-drop">
+                    <input type="file" name="dataset" accept=".csv" required>
+                    <span class="file-drop-title">Drop your CSV here</span>
+                    <span class="file-drop-sub">or tap to browse</span>
+                </label>
+                <button type="submit" class="btn-primary">Analyze Dataset</button>
+                <p class="tiny-note"> </p>
+            </form>
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <section class="alerts">
+              {% for message in messages %}
+                <div class="alert glass">{{ message }}</div>
+              {% endfor %}
+            </section>
+          {% endif %}
+        {% endwith %}
+
+        {% if analysis %}
+        <section class="section-head">
+            <div>
+                <div class="kicker">CURRENT FILE</div>
+                <h2>{{ filename }}</h2>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card glass"><div class="stat-label">Rows</div><div class="stat-value">{{ analysis.summary.rows }}</div></article>
+            <article class="stat-card glass"><div class="stat-label">Columns</div><div class="stat-value">{{ analysis.summary.columns }}</div></article>
+            <article class="stat-card glass"><div class="stat-label">Missing Cells</div><div class="stat-value">{{ analysis.summary.missing_cells }}</div></article>
+            <article class="stat-card glass"><div class="stat-label">Duplicate Rows</div><div class="stat-value">{{ analysis.summary.duplicate_rows }}</div></article>
+            <article class="stat-card glass"><div class="stat-label">Memory</div><div class="stat-value">{{ analysis.summary.memory_mb }} MB</div></article>
+        </section>
+
+        <section class="dual-grid">
+            <article class="glass panel">
+                <h3>Data types</h3>
+                <div class="pill-wrap">
+                    {% for dtype, count in analysis.dtype_counts.items() %}
+                        <span class="pill">{{ dtype }} • {{ count }}</span>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="glass panel">
+                <h3>What you get here</h3>
+                <ul class="clean-list">
+                    <li>Dataset footprint and quality snapshot</li>
+                    <li>Distributions for numeric columns</li>
+                    <li>Top values for categorical columns</li>
+                    <li>Missing-value overview</li>
+                    <li>Column profiles and row preview</li>
+                </ul>
+            </article>
+        </section>
+
+        {% if analysis.charts %}
+        <section class="section-head">
+            <div><div class="kicker">VISUALS</div><h2>Charts</h2></div>
+        </section>
+        <section class="chart-grid">
+            {% for chart in analysis.charts %}
+            <article class="glass chart-card">
+                <h3>{{ chart.title }}</h3>
+                <img src="data:image/png;base64,{{ chart.image }}" alt="{{ chart.title }}">
+            </article>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <section class="section-head">
+            <div><div class="kicker">COLUMN INTEL</div><h2>Profiles</h2></div>
+        </section>
+        <section class="column-grid">
+            {% for col in analysis.columns %}
+            <article class="glass column-card">
+                <div class="column-top">
+                    <h3>{{ col.name }}</h3>
+                    <span class="mini-pill">{{ col.dtype }}</span>
+                </div>
+                <div class="meta-row">
+                    <span>Missing: {{ col.missing }} ({{ col.missing_pct }}%)</span>
+                    <span>Unique: {{ col.unique }}</span>
+                </div>
+
+                {% if col.mean is defined %}
+                <div class="metric-stack">
+                    <div>Min <strong>{{ col.min }}</strong></div>
+                    <div>Mean <strong>{{ col.mean }}</strong></div>
+                    <div>Max <strong>{{ col.max }}</strong></div>
+                </div>
+                {% endif %}
+
+                {% if col.top_values is defined %}
+                <div class="sub-title">Top values</div>
+                <div class="chip-list">
+                    {% for item in col.top_values %}
+                    <span class="chip">{{ item.value }} • {{ item.count }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if col.sample_values %}
+                <div class="sub-title">Samples</div>
+                <div class="sample-list">
+                    {% for value in col.sample_values %}
+                    <div class="sample-item">{{ value }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </section>
+
+        <section class="section-head">
+            <div><div class="kicker">ROW PREVIEW</div><h2>First 20 rows</h2></div>
+        </section>
+        <section class="glass table-panel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for col in analysis.preview_columns %}
+                            <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in analysis.preview %}
+                        <tr>
+                            {% for col in analysis.preview_columns %}
+                            <td>{{ row[col] }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>
