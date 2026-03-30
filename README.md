@@ -4,7 +4,7 @@ The application provides an interactive, single-page interface that allows users
 
 CYEYE is a cyber intelligence platform developed to support the detection and investigation of cybercrime using automated data collection, NLP, machine learning, and anomaly detection techniques. The system continuously ingests large volumes of data from Telegram groups, darknet sources, and open web intelligence streams.
 
-As part of this process, multiple structured datasets are generated, including:
+As part of this process, multiple structured datasets are generated @29-03-2026 for a period of one month (March 2026) , including:
 
 Message classification datasets
 Anomaly detection datasets
