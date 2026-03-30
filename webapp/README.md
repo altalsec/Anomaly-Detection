@@ -1,5 +1,6 @@
-# Dataset Drip Analyzer
+# Dataset Analyzer
 
+Download the files. Install requirements and open the browser to start analyze. 
 A one-page Flask app for uploading a CSV dataset and analyzing it with a dark glassmorphism UI.
 
 ## Run
