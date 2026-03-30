@@ -2,7 +2,7 @@ This repository presents a lightweight web-based analytics tool designed to expl
 
 The application provides an interactive, single-page interface that allows users to upload CSV datasets and instantly visualize their structure, quality, and statistical properties. It is specifically tailored for datasets derived from large-scale intelligence collection pipelines, including Telegram monitoring, OSINT sources, and anomaly detection outputs.
 
-CYEYE is a cyber intelligence platform developed to support the detection and investigation of cybercrime using automated data collection, NLP, machine learning, and anomaly detection techniques. The system continuously ingests large volumes of data from Telegram groups, darknet sources, and open web intelligence streams.
+CYEYE is a cyber intelligence platform developed to support the detection and investigation of cybercrime using automated data collection, NLP, machine learning, and anomaly detection techniques. The system continuously ingests large volumes of data from Telegram groups, darknet sources, and open web intelligence streams. The data contains data from 4500 Open groups and channels and 1150 Closed groups, mostly dealing with cyber security.
 
 As part of this process, multiple structured datasets are generated @29-03-2026 for a period of one month (March 2026) , including:
 
